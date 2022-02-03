@@ -19,26 +19,6 @@ SCRIPT=$( basename "$0" )
 # Current script version
 VERSION="0.0.1"
 
-#
-# Message to display the usage and help
-#
-function usage {
-    local txt=(
-"Build script for serverless applications"
-"Usage: $SCRIPT [options] <command> [arguments]"
-""
-"Commands:"
-"  build             Build the application code"
-"  test              Run the application tests"
-"  deploy            Deploy the the application to cloud"
-""
-"Options:"
-"  --help, -h        Print help"
-"  --version, -v     Print version"
-
-    )
-    printf "%s\n" "${txt[@]}"
-}
 
 #
 # Message to display if the tool is incorrectly used
@@ -65,40 +45,29 @@ function version {
     printf "%s\n" "${txt[@]}"
 }
 
-#
-# Builds the application code and creates build artifacts
-#
-function app-build {
-  # TODO:
-  # install dependencies
-  # build app
-  # zip dependencies
-  # zip app
-    local txt=(
-"Building application with params: $*"
-    )
-    printf "%s\n" "${txt[@]}"
+function proj-deploy {
+
+  proj-clean
+
+  pushd app
+  ./run build
+  popd
+
+  mkdir artifacts
+  cp ./app/app.zip ./artifacts
+  cp ./app/dependencies.zip ./artifacts
+
+  pushd terraform
+  echo "terragrunt plan"
+  echo "terragrunt apply -auto-approve"
+  popd
+
 }
 
-#
-# Tests the application code
-#
-function app-test {
-    local txt=(
-"Running tests with params: $*"
-    )
-    printf "%s\n" "${txt[@]}"
+function proj-clean {
+  rm -rf ./artifacts
 }
 
-#
-# Deploys the application
-#
-function app-deploy {
-    local txt=(
-"Deploying application with params: $*"
-    )
-    printf "%s\n" "${txt[@]}"
-}
 
 #
 # Process options
@@ -118,10 +87,11 @@ do
         ;;
 
         build \
+        | deploy \
         | test)
             command=$1
             shift   # shifts positional arguments passed
-            app-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
+            proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
             exit 0
         ;;
 

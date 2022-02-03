@@ -27,7 +27,7 @@
     "test": "jest",
     "dev": "webpack-dev-server --inline --hot",
     "build": "tsc -b",
-    "clean": "rm -rf ./dist;"
+    "clean": "rm -rf ./dist ./node_modules;"
   },
   "keywords": [],
   "author": "",

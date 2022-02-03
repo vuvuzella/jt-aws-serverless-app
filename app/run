@@ -1,0 +1,111 @@
+#! /bin/env bash
+
+echo "Hello app run"
+
+#
+# Message to display the usage and help
+#
+function usage {
+    local txt=(
+"Build script for serverless applications"
+"Usage: $SCRIPT [options] <command> [arguments]"
+""
+"Commands:"
+"  build             Build the application code"
+"  test              Run the application tests"
+"  deploy            Deploy the the application to cloud"
+""
+"Options:"
+"  --help, -h        Print help"
+"  --version, -v     Print version"
+
+    )
+    printf "%s\n" "${txt[@]}"
+}
+
+#
+# Message to display if the tool is incorrectly used
+#
+function badusage {
+    local message="$1"
+    local txt=(
+"For an overview of the command, execute:"
+"$SCRIPT --help"
+    )
+
+    [[ $message ]] && printf "$message\n"
+
+    printf "%s\n" "${txt[@]}"
+}
+
+#
+# Builds the application code and creates build artifacts
+#
+function app-build {
+  # install dependencies
+  # build app
+  # zip dependencies
+  # zip app
+
+  npm run clean
+  npm install
+  npm run build
+
+  zip -r dependencies.zip ./node_modules
+  pushd dist
+  zip -r ../app.zip ./
+  popd
+
+  printf "%s\n" "${txt[@]}"
+}
+
+#
+# Tests the application code
+#
+function app-test {
+    local txt=(
+"Running tests with params: $*"
+    )
+    printf "%s\n" "${txt[@]}"
+}
+
+#
+# Deploys the application
+#
+function app-deploy {
+    local txt=(
+"Deploying application with params: $*"
+    )
+    printf "%s\n" "${txt[@]}"
+}
+
+#
+# Process options
+#
+while(( $# ))
+do
+    case "$1" in
+
+        --help | -h)
+            usage
+            exit 0
+        ;;
+
+        build \
+        | test)
+            command=$1
+            shift   # shifts positional arguments passed
+            app-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
+            exit 0
+        ;;
+
+        *)
+            badusage "Option/Command not recognized"
+            exit 1
+        ;;
+    # TODO: Add build, test and deploy, rollback? functions
+    esac
+done
+
+badusage
+exit 1
