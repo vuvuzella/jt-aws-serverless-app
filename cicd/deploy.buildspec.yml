@@ -15,9 +15,9 @@ phases:
       nodejs: 14.x
     commands:
       # install OS packages
-      - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
-        apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
-        apt-get update && apt-get install --yes terraform \
+      - curl -L -o terraform.zip https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip \
+        unzip -x terraform.zip \
+        mv ./terraform /usr/local/bin/terraform \
         terraform -version
       - curl -L -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 \
         chmod x+u ./terragrunt \
