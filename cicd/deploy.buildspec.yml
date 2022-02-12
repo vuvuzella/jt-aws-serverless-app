@@ -28,8 +28,7 @@ phases:
     commands:
       - echo "Prebuild - executing commands"
       - exit 0
-    on-failure:
-      - echo "Prebuild - This should not show"
+    on-failure: CONTINUE
   build:
     commands:
       - echo "Hello Codebuild" build phase
