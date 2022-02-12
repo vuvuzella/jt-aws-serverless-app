@@ -1,0 +1,46 @@
+version: 0.2
+
+env:
+  shell: bash
+  # parameter-store:
+
+  # secrets-manager:
+    # Another way to get secret
+  # exported-variables:
+    # for next stage in codepipeline
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14.x
+    commands:
+      # install OS packages
+      - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - \
+        apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
+        apt-get update && sudo apt-get install --yes terraform \
+        terraform -version
+      - curl -L -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 \
+        chmod x+u ./terragrunt \
+        mv ./terragrunt /usr/local/bin/terragrunt \
+        terragrunt -version
+
+  pre_build:
+    commands:
+      - echo "Prebuild - executing commands"
+      - exit 0
+    on-failure:
+      - echo "Prebuild - This should not show"
+  build:
+    commands:
+      - echo "Hello Codebuild" build phase
+      - exit 1
+    on-failure: ABORT
+    finally:
+      - echo "Build - This should always display"
+  post-build:
+    commands:
+      - echo "Hello Codebuild post-build phase"
+# artifacts:
+#   files:
+    # output directory of the output files
+  
