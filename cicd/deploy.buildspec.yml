@@ -36,7 +36,7 @@ phases:
     on-failure: ABORT
     finally:
       - echo "Build - This should always display"
-  post-build:
+  post_build:
     commands:
       - echo "Hello Codebuild post-build phase"
 # artifacts:
