@@ -25,13 +25,15 @@ phases:
       - chmod x+u ./terragrunt
       - mv ./terragrunt /usr/local/bin/terragrunt
       - terragrunt -version
-      -popd
+      - popd
+    on-failure: ABORT
 
   pre_build:
     commands:
       - echo "Prebuild - executing commands"
       - exit 0
     on-failure: CONTINUE
+
   build:
     commands:
       - echo "Hello Codebuild" build phase
@@ -39,6 +41,7 @@ phases:
     on-failure: ABORT
     finally:
       - echo "Build - This should always display"
+
   post_build:
     commands:
       - echo "Hello Codebuild post-build phase"
