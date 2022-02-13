@@ -21,7 +21,7 @@ phases:
         unzip -x -o terraform.zip &&
         mv ./terraform /usr/local/bin/terraform &&
         terraform -version
-      - push build-dep &&
+      - pushd build-dep &&
         curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 -o terragrunt &&
         chmod u+x ./terragrunt &&
         mv ./terragrunt /usr/local/bin/terragrunt &&
