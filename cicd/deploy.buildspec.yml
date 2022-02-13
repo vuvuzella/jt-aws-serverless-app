@@ -15,11 +15,11 @@ phases:
       nodejs: 14.x
     commands:
       # install OS packages
-      - curl -L -o terraform.zip https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip \
+      - curl -L https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip -o terraform.zip \
         unzip -x terraform.zip \
         mv ./terraform /usr/local/bin/terraform \
         terraform -version
-      - curl -L -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 \
+      - curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 -o terragrunt \
         chmod x+u ./terragrunt \
         mv ./terragrunt /usr/local/bin/terragrunt \
         terragrunt -version
