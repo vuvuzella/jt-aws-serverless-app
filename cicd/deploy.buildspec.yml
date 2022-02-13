@@ -15,6 +15,8 @@ phases:
       nodejs: 14.x
     commands:
       # install OS packages
+      - mkdir build-dep
+      - pushd build-dep
       - curl -L https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip -o terraform.zip
       - unzip -x -o terraform.zip
       - mv ./terraform /usr/local/bin/terraform
@@ -23,6 +25,7 @@ phases:
       - chmod x+u ./terragrunt
       - mv ./terragrunt /usr/local/bin/terragrunt
       - terragrunt -version
+      -popd
 
   pre_build:
     commands:
