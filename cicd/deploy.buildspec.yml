@@ -34,7 +34,7 @@ phases:
   pre_build:
     commands:
       - echo "Prebuild - executing commands"
-      - exit 1
+      - exit 0
     on-failure: CONTINUE
 
   build:
