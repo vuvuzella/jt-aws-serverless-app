@@ -4,12 +4,7 @@ provider "aws" {
 
 }
 
-provider "circleci" {
-  token = ""
-  organization = "vuvuzella"
-  vcs_type = "github"
-  
-}
+
 terraform {
   backend "s3" {
   }
@@ -18,6 +13,10 @@ terraform {
     aws = {
       source = "hashicorp/aws"
       version = "~> 3.0"
+    }
+    circleci = {
+      source = "TomTucka/circleci"
+      version = "~> 0.5.0"
     }
   }
 }
@@ -28,3 +27,17 @@ terraform {
 // module "codebuild" {
 //   source = "./codebuild"
 // }
+
+
+#----------------------------------
+# using codebuild as ci
+#----------------------------------
+module "circleci" {
+  source = "./circleci"
+  api_token = var.api_token
+}
+
+variable "api_token" {
+  type = string
+  default = ""
+}

@@ -9,3 +9,7 @@ remote_state {
     key = "serverless_app/cicd/terraform.tfstate"
   }
 }
+
+inputs = {
+  api_token = "Get this token from last pass circleci record"
+}
