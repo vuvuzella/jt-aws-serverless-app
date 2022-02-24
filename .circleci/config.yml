@@ -9,10 +9,12 @@ jobs:
           name: Unit Test
           command: |
             echo 'Running Unit Tests'
+            echo 'Second line'
       - run:
           name: Integration Test
           command: |
             echo 'Running Integration Tests'
+            echo 'Second line'
       - run:
           name: Code has arrived
           command: |
