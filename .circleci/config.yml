@@ -12,19 +12,19 @@ jobs:
           name: Integration Test
           command: |
             echo 'Running Integration Tests'
-  build:
-    docker:
-      - image: alpine:3.7
-    steps:
-      - run:
-          name: Package Application
-          command: |
-            echo 'Packing Application'
-  deploy:
-    docker:
-      - image: alpine:3.7
-    steps:
-      - run:
-          name: Deploying Application
-          command: |
-              echo 'Deploying Application'
+  # build:
+  #   docker:
+  #     - image: alpine:3.7
+  #   steps:
+  #     - run:
+  #         name: Package Application
+  #         command: |
+  #           echo 'Packing Application'
+  # deploy:
+  #   docker:
+  #     - image: alpine:3.7
+  #   steps:
+  #     - run:
+  #         name: Deploying Application
+  #         command: |
+  #             echo 'Deploying Application'
