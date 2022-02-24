@@ -11,5 +11,5 @@ remote_state {
 }
 
 inputs = {
-  api_token = "Get this token from last pass circleci record"
+  circleci_api_token = "Get this token from last pass circleci record"
 }

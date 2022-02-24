@@ -34,10 +34,10 @@ terraform {
 #----------------------------------
 module "circleci" {
   source = "./circleci"
-  api_token = var.api_token
+  api_token = var.circleci_api_token
 }
 
-variable "api_token" {
+variable "circleci_api_token" {
   type = string
   default = ""
 }
