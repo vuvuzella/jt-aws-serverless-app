@@ -1,11 +1,30 @@
 version: 2.1
 jobs:
+  test:
+    docker:
+      - image: alpine:3.7
+    steps:
+      - run:
+          name: Unit Test
+          command: |
+            echo 'Running Unit Tests'
+      - run:
+          name: Integration Test
+          command: |
+            echo 'Running Integration Tests'
   build:
     docker:
       - image: alpine:3.7
     steps:
       - run:
-          name: The First Step
+          name: Package Application
           command: |
-            echo 'Hello World'
-            echo 'This is the delivery pipeline'
+            echo 'Packing Application'
+  deploy:
+    docker:
+      - image: alpine:3.7
+    steps:
+      - run:
+          name: Deploying Application
+          command: |
+              echo 'Deploying Application'
