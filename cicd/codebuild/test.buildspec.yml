@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      # TODO: set the runtime-versions
+  pre_build:
+    commands:
+      # TODO: set the pre-build commands
+  build:
+    commands:
+      - echo "Hello Codebuild" build phase
+  post-build:
+    commands:
+      - echo "Hello Codebuild post-build phase"
+artifacts:
+  files:
+    # output directory of the output files
+  
