@@ -51,27 +51,29 @@ jobs:
       - run:
           name: Deploy Application to AWS
           command: |
-            ehco 'Deploying Serverless App to AWS'
+            echo 'Deploying Serverless App to AWS'
 
 workflows:
   Example_Workflow:
     jobs:
       - Get_Code
 
+      # Run Unit Test and Integration Test concurrently
       - Unit_Test:
           requires:
             - Get_Code
 
+      # For serverless/infrastructure testing, Parallelization of Integration Test might not be possible
+      # because of the need to deploy infra first before running tests
       - Integration_Test:
           requires:
-            - Unit_Test
+            - Get_Code
 
       - Hold_For_Approval:
           type: approval
           requires:
             - Integration_Test
             - Unit_Test
-            - Get_Code
 
       - Package_App:
           requires:
