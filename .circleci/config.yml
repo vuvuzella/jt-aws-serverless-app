@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       # - image: alpine:3.7
-      - image: cimg/node17.2-browsers
+      - image: cimg/node:17.2-browsers
     steps:
       - checkout
       - browser-tools/install-browser-tools
