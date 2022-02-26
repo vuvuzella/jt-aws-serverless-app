@@ -3,45 +3,80 @@ orbs:
   browser-tools: circleci/browser-tools@1.1.0
   aws-cli: circleci/aws-cli@2.1.0
 jobs:
-  build:
+  Get_Code:
     docker:
-      # - image: alpine:3.7
-      - image: cimg/node:17.2-browsers
+      - image: alpine:3.7
     steps:
       - checkout
-      - browser-tools/install-browser-tools
-      - run:
-          name: Unit Test
-          command: |
-            echo 'Running Unit Tests'
-            echo 'Second line'
-      - run:
-          name: Integration Test
-          command: |
-            echo 'Running Integration Tests'
-            echo 'Second line'
       - run:
           name: Code has arrived
           command: |
             ls -a
             echo "Code has arrived"
+
+  Package_App:
+    docker:
+      - image: cimg/node:17.2-browsers
+    steps:
+      - browser-tools/install-browser-tools
       - run:
-          name: Running in a unique container
+          name: Build Application
           command: |
             node -v
-  # build:
-  #   docker:
-  #     - image: alpine:3.7
-  #   steps:
-  #     - run:
-  #         name: Package Application
-  #         command: |
-  #           echo 'Packing Application'
-  # deploy:
-  #   docker:
-  #     - image: alpine:3.7
-  #   steps:
-  #     - run:
-  #         name: Deploying Application
-  #         command: |
-  #             echo 'Deploying Application'
+
+  Unit_Test:
+    docker:
+      - image: alpine:3.7
+    steps:
+      - run:
+          name: Unit Test
+          command: |
+            echo 'Running Unit Tests'
+            echo 'Second line'
+
+  Integration_Test:
+    docker:
+      - image: alpine:3.7
+    steps:
+      - run:
+          name: Integration Test
+          command: |
+            echo 'Running Integration Tests'
+            echo 'Second line'
+
+  Deploy_App:
+    docker:
+      - image: alpine:3.7
+    steps:
+      - run:
+          name: Deploy Application to AWS
+          command: |
+            ehco 'Deploying Serverless App to AWS'
+
+workflows:
+  Example_Workflow:
+    jobs:
+      - Get_Code
+
+      - Unit_Test:
+          requires:
+            - Get_Code
+
+      - Integration_Test:
+          requires:
+            - Unit_Test
+
+      - Hold_For_Approval:
+          type: approval
+          requires:
+            - Integration_Test
+            - Unit_Test
+            - Get_Code
+
+      - Package_App:
+          requires:
+            - Hold_For_Approval
+
+      - Deploy_App:
+          requires:
+            - Package_App
