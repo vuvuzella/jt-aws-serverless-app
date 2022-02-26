@@ -1,10 +1,15 @@
 version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.1.0
+  aws-cli: circleci/aws-cli@2.1.0
 jobs:
   build:
     docker:
-      - image: alpine:3.7
+      # - image: alpine:3.7
+      - cimg/node17.2-browsers
     steps:
       - checkout
+      - browser-tools/install-browser-tools
       - run:
           name: Unit Test
           command: |
@@ -20,6 +25,10 @@ jobs:
           command: |
             ls -a
             echo "Code has arrived"
+      - run:
+          name: Running in a unique container
+          command: |
+            node -v
   # build:
   #   docker:
   #     - image: alpine:3.7
