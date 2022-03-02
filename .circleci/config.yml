@@ -5,7 +5,7 @@ orbs:
 jobs:
   Install_Build_Dep:
     docker:
-      - image: alpine:3.7
+      - image: cimg/base:2021.04
     steps:
       - checkout
       - run:
@@ -28,7 +28,7 @@ jobs:
 
   Package_App:
     docker:
-      - image: alpine:3.7
+      - image: cimg/base:2021.04
     steps:
       - run:
           name: Build Application
@@ -39,7 +39,7 @@ jobs:
 
   Unit_Test:
     docker:
-      - image: alpine:3.7
+      - image: cimg/base:2021.04
     steps:
       - run:
           name: Unit Test
@@ -49,7 +49,7 @@ jobs:
 
   Integration_Test:
     docker:
-      - image: alpine:3.7
+      - image: cimg/base:2021.04
     steps:
       - run:
           name: Integration Test
@@ -59,7 +59,7 @@ jobs:
 
   Deploy_App:
     docker:
-      - image: alpine:3.7
+      - image: cimg/base:2021.04
     steps:
       - run:
           name: Deploy Application to AWS
