@@ -3,26 +3,39 @@ orbs:
   browser-tools: circleci/browser-tools@1.1.0
   aws-cli: circleci/aws-cli@2.1.0
 jobs:
-  Get_Code:
+  Install_Build_Dep:
     docker:
       - image: alpine:3.7
     steps:
       - checkout
       - run:
-          name: Code has arrived
+          name: Setup Build Environment
           command: |
-            ls -a
-            echo "Code has arrived"
+            mkdir build-dep &&
+            pushd build-dep &&
+            curl -L https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip -o terraform.zip &&
+            unzip -x -o terraform.zip &&
+            mv ./terraform /usr/local/bin/terraform &&
+            terraform -version &&
+            popd
+            ls -a &&
+            pushd build-dep &&
+            curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 -o terragrunt &&
+            chmod u+x ./terragrunt &&
+            mv ./terragrunt /usr/local/bin/terragrunt &&
+            terragrunt -version &&
+            popd
 
   Package_App:
     docker:
-      - image: cimg/node:17.2-browsers
+      - image: alpine:3.7
     steps:
-      - browser-tools/install-browser-tools
       - run:
           name: Build Application
           command: |
-            node -v
+            ./run clean
+            ./run build
+            ls -a && ls ./artifacts
 
   Unit_Test:
     docker:
@@ -56,18 +69,18 @@ jobs:
 workflows:
   Example_Workflow:
     jobs:
-      - Get_Code
+      - Install_Build_Dep
 
       # Run Unit Test and Integration Test concurrently
       - Unit_Test:
           requires:
-            - Get_Code
+            - Install_Build_Dep
 
       # For serverless/infrastructure testing, Parallelization of Integration Test might not be possible
       # because of the need to deploy infra first before running tests
       - Integration_Test:
           requires:
-            - Get_Code
+            - Install_Build_Dep
 
       - Hold_For_Approval:
           type: approval

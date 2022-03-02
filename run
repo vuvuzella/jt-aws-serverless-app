@@ -45,7 +45,7 @@ function version {
     printf "%s\n" "${txt[@]}"
 }
 
-function proj-deploy {
+function proj-build {
 
   proj-clean
 
@@ -56,6 +56,15 @@ function proj-deploy {
   mkdir artifacts
   cp ./app/app.zip ./artifacts
   cp ./app/dependencies.zip ./artifacts
+
+  echo 'Project Built Successfully'
+}
+
+function proj-deploy {
+
+  proj-clean
+
+  proj-build
 
   pushd terraform
   echo "terragrunt plan"
@@ -86,18 +95,28 @@ do
             exit 0
         ;;
 
-        build \
-        | deploy \
-        | test)
-            command=$1
-            shift   # shifts positional arguments passed
-            proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
-            exit 0
+        build)
+          command=$1
+          shift
+          proj-$command $*
+          exit 0
+        ;;
+
+        test)
+          echo 'Testing not yet implemented'
+          exit 0
+        ;;
+
+        deploy)
+          command=$1
+          shift   # shifts positional arguments passed
+          proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
+          exit 0
         ;;
 
         *)
-            badusage "Option/Command not recognized"
-            exit 1
+          badusage "Option/Command not recognized"
+          exit 1
         ;;
     # TODO: Add build, test and deploy, rollback? functions
     esac
