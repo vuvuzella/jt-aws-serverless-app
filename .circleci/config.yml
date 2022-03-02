@@ -12,19 +12,19 @@ jobs:
           name: Setup Build Environment
           command: |
             mkdir build-dep &&
-            pushd build-dep &&
+            cd build-dep &&
             curl -L https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip -o terraform.zip &&
             unzip -x -o terraform.zip &&
             mv ./terraform /usr/local/bin/terraform &&
             terraform -version &&
-            popd
+            cd ..
             ls -a &&
-            pushd build-dep &&
+            cd build-dep &&
             curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 -o terragrunt &&
             chmod u+x ./terragrunt &&
             mv ./terragrunt /usr/local/bin/terragrunt &&
             terragrunt -version &&
-            popd
+            cd ..
 
   Package_App:
     docker:
