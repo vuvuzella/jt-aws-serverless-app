@@ -3,7 +3,7 @@ version: 2.1
 executors:
   serverless-base-image:
     docker:
-      - image: vuvuzella/docker-serverless-base-image:0.1.5
+      - image: vuvuzella/docker-serverless-base-image:0.1.6
         # auth:
         #   username: $DOCKERHUB_USERNAME
         #   password: $DOCKERHUB_PASSWORD
