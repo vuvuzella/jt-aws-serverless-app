@@ -22,6 +22,7 @@ jobs:
           command: |
             terraform -version
             terragrunt -version
+            ls -a
 
   Package_App:
     executor: serverless-base-image
@@ -29,6 +30,7 @@ jobs:
       - run:
           name: Build Application
           command: |
+            ls -a
             ./run clean
             ./run build
 
@@ -39,6 +41,8 @@ jobs:
           name: Unit Test
           command: |
             echo 'Running Unit Tests'
+            pushd app
+            ls -a
             npm install
             npm run test:unit
 
@@ -49,6 +53,8 @@ jobs:
           name: Integration Test
           command: |
             echo 'Running Integration Tests'
+            pushd app
+            ls -a
             npm install
             npm run test:integration
 
