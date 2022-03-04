@@ -1,41 +1,48 @@
 version: 2.1
+
+executors:
+  base_image:
+    docker:
+      - image: cimg/base:stable
+  custom_image:
+    docker:
+      - image: vuvuzella/docker-serverless:0.1.1
+  custom_image_auth:
+    docker:
+      - image: vuvuzella/docker-serverless:0.1.1
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+
 orbs:
   browser-tools: circleci/browser-tools@1.1.0
   aws-cli: circleci/aws-cli@2.1.0
+
 jobs:
   Install_Build_Dep:
     docker:
-      - image: cimg/base:2021.04
+      - image: vuvuzella/docker-serverless-base-image:0.1.5
     steps:
       - checkout
       - run:
-          name: Setup Build Environment
+          name: Check setup environment
           command: |
-            mkdir build-dep &&
-            cd build-dep &&
-            curl -L https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip -o terraform.zip &&
-            unzip -x -o terraform.zip &&
-            mv ./terraform /usr/local/bin/terraform &&
-            terraform -version &&
-            cd ..
-            ls -a &&
-            cd build-dep &&
-            curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64 -o terragrunt &&
-            chmod u+x ./terragrunt &&
-            mv ./terragrunt /usr/local/bin/terragrunt &&
-            terragrunt -version &&
-            cd ..
+            echo 'in Install_Build_Dep'
+            terraform -version
+            terragrunt -version
+            ls -a
 
   Package_App:
     docker:
-      - image: cimg/base:2021.04
+      - image: vuvuzella/docker-serverless-base-image:0.1.5
     steps:
       - run:
           name: Build Application
           command: |
-            ./run clean
-            ./run build
-            ls -a && ls ./artifacts
+            echo 'in Package_App'
+            terraform -version
+            terragrunt -version
+            ls -a
 
   Unit_Test:
     docker:
@@ -82,16 +89,16 @@ workflows:
           requires:
             - Install_Build_Dep
 
-      - Hold_For_Approval:
-          type: approval
-          requires:
-            - Integration_Test
-            - Unit_Test
+      # - Hold_For_Approval:
+      #     type: approval
+      #     requires:
+      #       - Integration_Test
+      #       - Unit_Test
 
-      - Package_App:
-          requires:
-            - Hold_For_Approval
+      # - Package_App:
+      #     requires:
+      #       - Hold_For_Approval
 
-      - Deploy_App:
-          requires:
-            - Package_App
+      # - Deploy_App:
+      #     requires:
+      #       - Package_App
