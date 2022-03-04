@@ -24,7 +24,8 @@
     "webpack-dev-server": "^4.7.3"
   },
   "scripts": {
-    "test": "jest",
+    "test:integration": "jest integration",
+    "test:unit" : "jest unit",
     "dev": "webpack-dev-server --inline --hot",
     "build": "tsc -b",
     "clean": "rm -rf ./dist ./node_modules;"

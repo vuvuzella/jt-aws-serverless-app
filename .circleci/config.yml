@@ -1,18 +1,12 @@
 version: 2.1
 
 executors:
-  base_image:
+  serverless-base-image:
     docker:
-      - image: cimg/base:stable
-  custom_image:
-    docker:
-      - image: vuvuzella/docker-serverless:0.1.1
-  custom_image_auth:
-    docker:
-      - image: vuvuzella/docker-serverless:0.1.1
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
+      - image: vuvuzella/docker-serverless-base-image:0.1.5
+        # auth:
+        #   username: $DOCKERHUB_USERNAME
+        #   password: $DOCKERHUB_PASSWORD
 
 orbs:
   browser-tools: circleci/browser-tools@1.1.0
@@ -20,58 +14,54 @@ orbs:
 
 jobs:
   Install_Build_Dep:
-    docker:
-      - image: vuvuzella/docker-serverless-base-image:0.1.5
+    executor: serverless-base-image
     steps:
       - checkout
       - run:
-          name: Check setup environment
+          name: Install Build Dependencies
           command: |
-            echo 'in Install_Build_Dep'
             terraform -version
             terragrunt -version
-            ls -a
 
   Package_App:
-    docker:
-      - image: vuvuzella/docker-serverless-base-image:0.1.5
+    executor: serverless-base-image
     steps:
       - run:
           name: Build Application
           command: |
-            echo 'in Package_App'
-            terraform -version
-            terragrunt -version
-            ls -a
+            ./run clean
+            ./run build
 
   Unit_Test:
-    docker:
-      - image: cimg/base:2021.04
+    executor: serverless-base-image
     steps:
       - run:
           name: Unit Test
           command: |
             echo 'Running Unit Tests'
-            echo 'Second line'
+            npm install
+            npm run test:unit
 
   Integration_Test:
-    docker:
-      - image: cimg/base:2021.04
+    executor: serverless-base-image
     steps:
       - run:
           name: Integration Test
           command: |
             echo 'Running Integration Tests'
-            echo 'Second line'
+            npm install
+            npm run test:integration
 
   Deploy_App:
-    docker:
-      - image: cimg/base:2021.04
+    executor: serverless-base-image
     steps:
       - run:
           name: Deploy Application to AWS
           command: |
             echo 'Deploying Serverless App to AWS'
+            terraform -version
+            terragrunt -version
+            ls -a
 
 workflows:
   Example_Workflow:
@@ -89,16 +79,16 @@ workflows:
           requires:
             - Install_Build_Dep
 
-      # - Hold_For_Approval:
-      #     type: approval
-      #     requires:
-      #       - Integration_Test
-      #       - Unit_Test
+      - Hold_For_Approval:
+          type: approval
+          requires:
+            - Integration_Test
+            - Unit_Test
 
-      # - Package_App:
-      #     requires:
-      #       - Hold_For_Approval
+      - Package_App:
+          requires:
+            - Hold_For_Approval
 
-      # - Deploy_App:
-      #     requires:
-      #       - Package_App
+      - Deploy_App:
+          requires:
+            - Package_App
