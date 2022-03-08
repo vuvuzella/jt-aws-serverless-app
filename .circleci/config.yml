@@ -17,15 +17,24 @@ jobs:
   Install_Build_Dep:
     executor: serverless-base-image
     steps:
+      - checkout
       - run:
           name: Install Build Dependencies
           command: |
-            terraform -version
-            terragrunt -version
+            echo 'Running Install Build Dep'
+            cd app
+            npm build
+      - persist_to_workspace:
+          root: app
+          paths:
+            - node_modules
 
   Package_App:
     executor: serverless-base-image
     steps:
+      - checkout
+      - attach_workspace:
+          at: /root/project
       - run:
           name: Build Application
           command: |
@@ -42,10 +51,13 @@ jobs:
     executor: serverless-base-image
     steps:
       - checkout
+      - attach_workspace:
+          at: /root/project
       - run:
           name: Unit Test
           command: |
             echo 'Running Unit Tests'
+            ls -a
             pushd app
             npm run test:unit
 
@@ -53,16 +65,20 @@ jobs:
     executor: serverless-base-image
     steps:
       - checkout
+      - attach_workspace:
+          at: /root/project
       - run:
           name: Integration Test
           command: |
             echo 'Running Integration Tests'
+            ls -a
             pushd app
             npm run test:integration
 
   Deploy_App:
     executor: serverless-base-image
     steps:
+      - checkout
       - attach_workspace:
           at: /root/project
       - run:
