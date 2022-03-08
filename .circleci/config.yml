@@ -23,7 +23,7 @@ jobs:
           command: |
             echo 'Running Install Build Dep'
             cd app
-            npm build
+            npm install
       - persist_to_workspace:
           root: app
           paths:
