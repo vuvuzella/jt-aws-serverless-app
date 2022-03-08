@@ -7,7 +7,6 @@ executors:
         # auth:
         #   username: $DOCKERHUB_USERNAME
         #   password: $DOCKERHUB_PASSWORD
-    working_directory: /tmp
 
 orbs:
   browser-tools: circleci/browser-tools@1.1.0
@@ -23,6 +22,8 @@ jobs:
           command: |
             terraform -version
             terragrunt -version
+            pwd
+            ls -a
             cd app
       - persist_to_workspace:
           root: workspace
