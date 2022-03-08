@@ -7,6 +7,7 @@ executors:
         # auth:
         #   username: $DOCKERHUB_USERNAME
         #   password: $DOCKERHUB_PASSWORD
+    working_directory: /root/project
 
 orbs:
   browser-tools: circleci/browser-tools@1.1.0
@@ -16,19 +17,11 @@ jobs:
   Install_Build_Dep:
     executor: serverless-base-image
     steps:
-      - checkout
       - run:
           name: Install Build Dependencies
           command: |
             terraform -version
             terragrunt -version
-            pwd
-            ls -a
-            cd app
-      - persist_to_workspace:
-          root: workspace
-          paths:
-            - build-dep
 
   Package_App:
     executor: serverless-base-image
@@ -39,16 +32,22 @@ jobs:
             ls -a
             ./run clean
             ./run build
+      - persist_to_workspace:
+          root: artifacts
+          paths:
+            - app.zip
+            - dependencies.zip
 
   Unit_Test:
     executor: serverless-base-image
     steps:
+      - checkout
       - run:
           name: Unit Test
           command: |
             echo 'Running Unit Tests'
             pushd app
-            ls -a
+            npm run test:unit
 
   Integration_Test:
     executor: serverless-base-image
@@ -59,17 +58,17 @@ jobs:
           command: |
             echo 'Running Integration Tests'
             pushd app
-            ls -a
+            npm run test:integration
 
   Deploy_App:
     executor: serverless-base-image
     steps:
+      - attach_workspace:
+          at: /root/project
       - run:
           name: Deploy Application to AWS
           command: |
             echo 'Deploying Serverless App to AWS'
-            terraform -version
-            terragrunt -version
             ls -a
 
 workflows:
