@@ -42,10 +42,9 @@ jobs:
             ./run clean
             ./run build
       - persist_to_workspace:
-          root: artifacts
+          root: /root/project
           paths:
-            - app.zip
-            - dependencies.zip
+            - artifacts
 
   Unit_Test:
     executor: serverless-base-image
