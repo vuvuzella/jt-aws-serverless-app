@@ -95,6 +95,13 @@ do
             exit 0
         ;;
 
+        clean)
+          command=$1
+          shift
+          proj-$command $*
+          exit 0
+        ;;
+
         build)
           command=$1
           shift
