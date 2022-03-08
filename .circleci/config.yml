@@ -7,6 +7,7 @@ executors:
         # auth:
         #   username: $DOCKERHUB_USERNAME
         #   password: $DOCKERHUB_PASSWORD
+    working_directory: /tmp
 
 orbs:
   browser-tools: circleci/browser-tools@1.1.0
@@ -22,7 +23,11 @@ jobs:
           command: |
             terraform -version
             terragrunt -version
-            ls -a
+            cd app
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - build-dep
 
   Package_App:
     executor: serverless-base-image
@@ -43,20 +48,17 @@ jobs:
             echo 'Running Unit Tests'
             pushd app
             ls -a
-            npm install
-            npm run test:unit
 
   Integration_Test:
     executor: serverless-base-image
     steps:
+      - checkout
       - run:
           name: Integration Test
           command: |
             echo 'Running Integration Tests'
             pushd app
             ls -a
-            npm install
-            npm run test:integration
 
   Deploy_App:
     executor: serverless-base-image
