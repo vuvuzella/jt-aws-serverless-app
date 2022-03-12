@@ -4,15 +4,16 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {
-    bucket = "admin-dev-projects-tfstates"
-    # project/phase/component
-    key = "serverless_app/stage/terraform.tfstate"
-    region = "ap-southeast-2"
-    dynamodb_table = "admin-dev-projects-locks"
-    encrypt = true
-    profile = "admin-dev"
+
+  required_version = "~>1.1.6"
+  required_providers {
+    aws = {
+      source ="hashicorp/aws"
+      version = "~>3.73.0"
+    }
   }
+  backend "s3" {}
+
 }
 
 resource "aws_lambda_function" "serverless_app" {
@@ -20,7 +21,7 @@ resource "aws_lambda_function" "serverless_app" {
   function_name = "serverless-lambda"
   role = aws_iam_role.lambda_role.arn
   handler = "index.handler"
-  source_code_hash = filebase64sha256("app.zip")
+  source_code_hash = filebase64sha256("../../artifacts/app.zip")
   runtime = "nodejs14.x"
   layers = [aws_lambda_layer_version.dependencies.arn]
   environment {
@@ -83,7 +84,7 @@ resource "aws_lambda_function_event_invoke_config" "example" {
 }
 
 resource "aws_lambda_layer_version" "dependencies" {
-  filename = "app.zip"
+  filename = "../../artifacts/dependencies.zip"
   layer_name = "serverless_app_dependencies"
 
   compatible_runtimes = ["nodejs14.x"]

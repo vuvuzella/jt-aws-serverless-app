@@ -21,13 +21,8 @@ jobs:
       - run:
           name: Install Build Dependencies
           command: |
-            echo 'Running Install Build Dep'
             cd app
             npm install
-      # - persist_to_workspace:
-      #     root: /root/project
-      #     paths:
-      #       - app/node_modules
       - save_cache:
           key: app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
           paths:
@@ -46,7 +41,6 @@ jobs:
       - run:
           name: Build Application
           command: |
-            ls -a
             ./run clean
             ./run build
       - persist_to_workspace:
@@ -61,15 +55,10 @@ jobs:
       - restore_cache:
           keys:
             - app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
-      # - attach_workspace:
-      #     at: /root/project
       - run:
           name: Unit Test
           command: |
-            echo 'Running Unit Tests'
-            ls -a
             pushd app
-            ls -a
             npm run test:unit
 
   Integration_Test:
@@ -79,26 +68,18 @@ jobs:
       - restore_cache:
           keys:
             - app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
-      # - attach_workspace:
-      #     at: /root/project
       - run:
           name: Integration Test
           command: |
-            echo 'Running Integration Tests'
-            ls -a
             pushd app
-            ls -a
             npm run test:integration
 
   Deploy_App:
     executor: serverless-base-image
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
-      # - attach_workspace:
-      #     at: /root/project
+      - attach_workspace:
+          at: /root/project
       - run:
           name: Deploy Application to AWS
           command: |
