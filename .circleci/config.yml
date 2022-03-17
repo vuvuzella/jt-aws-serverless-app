@@ -74,16 +74,53 @@ jobs:
             pushd app
             npm run test:integration
 
-  Deploy_App:
+  System_Test:
+    executor: serverless-base-image
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
+      - run:
+          name: Integration Test
+          command: |
+            pushd app
+            echo "Running System Test"
+
+  Deploy_App_Dev:
     executor: serverless-base-image
     steps:
       - checkout
       - attach_workspace:
           at: /root/project
       - run:
-          name: Deploy Application to AWS
+          name: Deploy Application to DEV
           command: |
-            echo 'Deploying Serverless App to AWS'
+            echo 'Deploying Serverless App to DEV'
+            ls -a
+
+  Deploy_App_Staging:
+    executor: serverless-base-image
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /root/project
+      - run:
+          name: Deploy Application to STAGING
+          command: |
+            echo 'Deploying Serverless App to Staging'
+            ls -a
+
+  Deploy_App_Prod:
+    executor: serverless-base-image
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /root/project
+      - run:
+          name: Deploy Application to PROD
+          command: |
+            echo 'Deploying Serverless App to Prod'
             ls -a
 
 workflows:
@@ -96,22 +133,38 @@ workflows:
           requires:
             - Install_Build_Dep
 
+      - Package_App:
+          requires:
+            - Install_Build_Dep
+
+      - Deploy_App_Dev:
+          requires:
+            - Package_App
+
       # For serverless/infrastructure testing, Parallelization of Integration Test might not be possible
       # because of the need to deploy infra first before running tests
       - Integration_Test:
           requires:
-            - Install_Build_Dep
+            - Deploy_App_Dev
 
-      - Hold_For_Approval:
+      - Hold_Dev:
           type: approval
           requires:
             - Integration_Test
-            - Unit_Test
 
-      - Package_App:
+      - Deploy_App_Staging:
           requires:
-            - Hold_For_Approval
+          - Hold_Dev
 
-      - Deploy_App:
+      - System_Test:
           requires:
-            - Package_App
+          - Deploy_App_Staging
+
+      - Hold_Staging:
+          type: approval
+          requires:
+            - System_Test
+
+      - Deploy_App_Prod:
+          requires:
+            - Hold_Staging
