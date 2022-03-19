@@ -24,6 +24,43 @@ function usage {
 
 function proj-plan {
   echo "executing the terraform plan"
+
+  case "$ENVIRONMENT" in
+    dev)
+      echo "deploying to dev"
+      pushd deploy
+      pushd dev
+      terragrunt init
+      terragrunt plan
+      popd
+      popd
+      exit 0
+    ;;
+    staging)
+      echo "deploying to staging"
+      pushd deploy
+      pushd staging
+      terragrunt init
+      terragrunt plan
+      popd
+      popd
+      exit 0
+    ;;
+    prod)
+      echo "deploying to prod"
+      pushd deploy
+      pushd prod
+      terragrunt init
+      terragrunt plan
+      popd
+      popd
+      exit 0
+    ;;
+    *)
+      echo "Error: Environment value is not one of \"dev\", \"staging\", or \"prod\": $ENVIRONMENT"
+      exit 0
+    ;;
+  esac
 }
 
 function proj-test {
@@ -40,7 +77,8 @@ function proj-deploy {
         echo "deploying to dev"
         pushd deploy
         pushd dev
-        terragrunt apply
+        terragrunt init
+        terragrunt apply -auto-approve
         popd
         popd
         exit 0
@@ -49,7 +87,8 @@ function proj-deploy {
         echo "deploying to staging"
         pushd deploy
         pushd staging
-        terragrunt plan
+        terragrunt init
+        terragrunt apply -auto-approve
         popd
         popd
         exit 0
@@ -58,7 +97,8 @@ function proj-deploy {
         echo "deploying to prod"
         pushd deploy
         pushd prod
-        terragrunt plan
+        terragrunt init
+        terragrunt apply -auto-approve
         popd
         popd
         exit 0

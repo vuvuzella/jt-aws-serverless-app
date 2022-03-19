@@ -30,7 +30,7 @@
     "test:integration": "jest integration",
     "test:unit": "jest unit",
     "dev": "webpack-dev-server --inline --hot",
-    "build": "tsc -b -p ./tsconfig.deploy.json",
+    "build": "tsc -p ./tsconfig.deploy.json",
     "clean": "rm -rf ./dist ./node_modules;"
   },
   "keywords": [],

@@ -19,4 +19,5 @@ module "lambda_generic" {
   source = "../"
   app_artifact = var.app_artifact
   app_dep_artifact = var.app_dep_artifact
+  app_handler = "index.helloWorld"  # TODO: make a self-contained example handler for this
 }

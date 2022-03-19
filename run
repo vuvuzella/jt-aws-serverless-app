@@ -47,86 +47,80 @@ function version {
 
 function proj-build {
 
-  proj-clean
-
-  pushd app
+  # Build api
+  pushd backend
+  pushd api
   ./run build
   popd
-
-  mkdir artifacts
-  cp ./app/app.zip ./artifacts
-  cp ./app/dependencies.zip ./artifacts
-
-  echo 'Project Built Successfully'
+  popd
 }
 
 function proj-deploy {
-
-  proj-clean
-
-  proj-build
-
-  pushd terraform
-  echo "terragrunt plan"
-  echo "terragrunt apply -auto-approve"
+  # Deploy api
+  pushd backend
+  pushd api
+  ./run deploy
   popd
-
+  popd
 }
 
-function proj-clean {
-  rm -rf ./artifacts
-}
-
+if [ -z "$ENVIRONMENT" ];
+then
+  echo "Error, ENVIRONMENT variable was not set"
+  exit 1
+fi
 
 #
 # Process options
 #
 while(( $# ))
 do
-    case "$1" in
 
-        --help | -h)
-            usage
-            exit 0
-        ;;
 
-        --version | -v)
-            version
-            exit 0
-        ;;
+  case "$1" in
 
-        clean)
-          command=$1
-          shift
-          proj-$command $*
+      --help | -h)
+          usage
           exit 0
-        ;;
+      ;;
 
-        build)
-          command=$1
-          shift
-          proj-$command $*
+      --version | -v)
+          version
           exit 0
-        ;;
+      ;;
 
-        test)
-          echo 'Testing not yet implemented'
-          exit 0
-        ;;
+      clean)
+        command=$1
+        shift
+        proj-$command $*
+        exit 0
+      ;;
 
-        deploy)
-          command=$1
-          shift   # shifts positional arguments passed
-          proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
-          exit 0
-        ;;
+      build)
+        command=$1
+        shift
+        proj-$command $*
+        exit 0
+      ;;
 
-        *)
-          badusage "Option/Command not recognized"
-          exit 1
-        ;;
-    # TODO: Add build, test and deploy, rollback? functions
-    esac
+      test)
+        echo 'Testing not yet implemented'
+        exit 0
+      ;;
+
+      deploy)
+        command=$1
+        shift   # shifts positional arguments passed
+        proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
+        exit 0
+      ;;
+
+      *)
+        badusage "Option/Command not recognized"
+        exit 1
+      ;;
+  # TODO: Add build, test and deploy, rollback? functions
+  esac
 done
 
 badusage

@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+function proj-clean {
+  rm -rf ./artifacts
+}
+
+function proj-build {
+
+  proj-clean
+
+  pushd app
+  ./run build
+  popd
+
+  mkdir artifacts
+  mv ./app/app.zip ./artifacts
+  mv ./app/dependencies.zip ./artifacts
+
+}
+
+function proj-deploy {
+  pushd terraform
+  ./run deploy
+  popd
+}
+
+#
+# Process options
+#
+while(( $# ))
+do
+    case "$1" in
+
+        --help | -h)
+            usage
+            exit 0
+        ;;
+
+        --version | -v)
+            version
+            exit 0
+        ;;
+
+        clean)
+          command=$1
+          shift
+          proj-$command $*
+          exit 0
+        ;;
+
+        build)
+          command=$1
+          shift
+          proj-$command $*
+          exit 0
+        ;;
+
+        test)
+          echo 'Testing not yet implemented'
+          exit 0
+        ;;
+
+        deploy)
+          command=$1
+          shift   # shifts positional arguments passed
+          proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
+          exit 0
+        ;;
+
+        *)
+          badusage "Option/Command not recognized"
+          exit 1
+        ;;
+    # TODO: Add build, test and deploy, rollback? functions
+    esac
+done
+
+badusage
+exit 1

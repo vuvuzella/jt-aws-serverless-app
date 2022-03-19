@@ -1,7 +1,5 @@
 #! /bin/env bash
 
-echo "Hello app run"
-
 #
 # Message to display the usage and help
 #
@@ -52,6 +50,7 @@ function app-build {
   npm run build
 
   zip -r dependencies.zip ./node_modules
+  rm -rf ./node_modules
   pushd dist
   zip -r ../app.zip ./
   popd

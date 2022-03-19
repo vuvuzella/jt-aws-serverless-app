@@ -89,6 +89,8 @@ jobs:
 
   Deploy_App_Dev:
     executor: serverless-base-image
+    environment:
+      ENVIRONMENT: dev
     steps:
       - checkout
       - attach_workspace:

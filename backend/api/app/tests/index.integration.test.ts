@@ -1,10 +1,11 @@
-import { handler } from '../src/index'
+import { helloWorld } from '../src/index';
 
-describe('Integration testing for handler', () => {
+describe('Integration testing for handlser', () => {
 
   it('Execute correctly', async () => {
-    const result = await handler();
-    expect(result).toBe('Hello World');
-  })
+    const result = await helloWorld();
+    expect(result.statusCode).toBe(200);
+    expect(result.body).toBe('Hello World from Lambda!')
+  });
 
-})
+});

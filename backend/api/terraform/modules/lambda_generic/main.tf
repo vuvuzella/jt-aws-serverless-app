@@ -12,7 +12,7 @@ resource "aws_lambda_function" "serverless_app" {
   filename = var.app_artifact
   function_name = "serverless-lambda"
   role = aws_iam_role.lambda_role.arn
-  handler = "index.handler"
+  handler = var.app_handler
   source_code_hash = filebase64sha256(var.app_artifact)
   runtime = "nodejs14.x"
   layers = [aws_lambda_layer_version.dependencies.arn]

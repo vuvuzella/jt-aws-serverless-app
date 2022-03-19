@@ -5,6 +5,7 @@ variable "environment" {
 
 provider "aws" {
   region = "ap-southeast-2"
+  profile = "admin-dev"
   default_tags {
     tags = {
       Environment = var.environment
@@ -27,4 +28,14 @@ terraform {
 
 output "Environment" {
   value = var.environment
+}
+
+# ---------------------------------
+# Sample lambda
+# ---------------------------------
+module "helloWorld" {
+  source = "../../../../../modules/lambda_generic"
+  app_artifact = "../../../../../../artifacts/app.zip"
+  app_dep_artifact = "../../../../../../artifacts/dependencies.zip"
+  app_handler = "index.helloWorld"
 }
