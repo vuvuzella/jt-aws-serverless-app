@@ -27,7 +27,7 @@ jobs:
       - save_cache:
           key: api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
           paths:
-            - backend/api/backend/api/app/node_modules
+            - backend/api/app/node_modules
       - persist_to_workspace:
           root: /root/project
           paths:
