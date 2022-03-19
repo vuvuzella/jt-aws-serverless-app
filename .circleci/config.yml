@@ -76,6 +76,9 @@ jobs:
       ENVIRONMENT: dev
     steps:
       - checkout
+      - aws-cli/setup:
+          aws-region: ap-southeast-2
+          profile-name: admin-dev
       - attach_workspace:
           at: /root/project
       - run:
