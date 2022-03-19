@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Phases:
 # 1. Run unit tests
 # 2. Build application and create artifacts
