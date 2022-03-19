@@ -25,7 +25,7 @@ jobs:
           command: |
             ./run build
       - save_cache:
-          key: api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
+          key: api_dependencies-v1-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
           paths:
             - backend/api/app/node_modules
       - persist_to_workspace:
@@ -39,7 +39,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
+            - api_dependencies-v1-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
       - run:
           name: Unit Test
           command: |
@@ -51,7 +51,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
+            - api_dependencies-v1-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
       - run:
           name: Integration Test
           command: |
