@@ -40,19 +40,13 @@ function badusage {
 # Builds the application code and creates build artifacts
 #
 function app-build {
-  # install dependencies
-  # build app
-  # zip dependencies
-  # zip app
-
   npm run clean
   npm install
   npm run build
 
   zip -r dependencies.zip ./node_modules
-  rm -rf ./node_modules
   pushd dist
-  zip -r ../app.zip ./
+  zip -r ../app.zip ./ -x node_modules
   popd
 
   printf "%s\n" "${txt[@]}"
@@ -61,11 +55,16 @@ function app-build {
 #
 # Tests the application code
 #
-function app-test {
-    local txt=(
-"Running tests with params: $*"
-    )
-    printf "%s\n" "${txt[@]}"
+function app-test_unit {
+#     local txt=(
+# "Running tests with params: $*"
+#     )
+#     printf "%s\n" "${txt[@]}"
+  npm run test:unit
+}
+
+function app-test_integration {
+  npm run test:integration
 }
 
 #
@@ -90,8 +89,21 @@ do
             exit 0
         ;;
 
-        build \
-        | test)
+        test_unit)
+          command=$1
+          shift
+          app-$command $*
+          exit 0
+        ;;
+
+        test_integration)
+          command=$1
+          shift
+          app-$command $*
+          exit 0
+        ;;
+
+        build)
             command=$1
             shift   # shifts positional arguments passed
             app-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command

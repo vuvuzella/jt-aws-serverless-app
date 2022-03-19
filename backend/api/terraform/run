@@ -63,10 +63,6 @@ function proj-plan {
   esac
 }
 
-function proj-test {
-  echo "executing terraform test"
-}
-
 function proj-deploy {
   echo "executing terraform deploy"
 
@@ -132,8 +128,7 @@ do
           exit 0
         ;;
 
-        test \
-        | deploy)
+        deploy)
             command=$1
             shift   # shifts positional arguments passed
             proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command

@@ -24,6 +24,18 @@ function proj-deploy {
   popd
 }
 
+function proj-test_unit {
+  pushd app
+  ./run test_unit
+  popd
+}
+
+function proj-test_integration {
+  pushd app
+  ./run test_integration
+  popd
+}
+
 #
 # Process options
 #
@@ -55,8 +67,17 @@ do
           exit 0
         ;;
 
-        test)
-          echo 'Testing not yet implemented'
+        test_unit)
+          command=$1
+          shift
+          proj-$command $*
+          exit 0
+        ;;
+
+        test_integration)
+          command=$1
+          shift
+          proj-$command $*
           exit 0
         ;;
 

@@ -56,6 +56,13 @@ function proj-build {
 }
 
 function proj-deploy {
+
+  if [ -z "$ENVIRONMENT" ];
+  then
+    echo "Error, ENVIRONMENT variable was not set"
+    exit 1
+  fi
+
   # Deploy api
   pushd backend
   pushd api
@@ -64,11 +71,28 @@ function proj-deploy {
   popd
 }
 
-if [ -z "$ENVIRONMENT" ];
-then
-  echo "Error, ENVIRONMENT variable was not set"
-  exit 1
-fi
+function proj-test_unit {
+
+  # api unit tests
+  pushd ./backend
+  pushd ./api
+  ./run test_unit
+  popd
+  popd
+
+}
+
+function proj-test_integration {
+
+  # api unit tests
+  pushd backend
+  pushd api
+  ./run test_integration
+  popd
+  popd
+
+}
+
 
 #
 # Process options
@@ -103,8 +127,17 @@ do
         exit 0
       ;;
 
-      test)
-        echo 'Testing not yet implemented'
+      test_unit)
+        command=$1
+        shift   # shifts positional arguments passed
+        proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
+        exit 0
+      ;;
+
+      test_integration)
+        command=$1
+        shift   # shifts positional arguments passed
+        proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
         exit 0
       ;;
 
