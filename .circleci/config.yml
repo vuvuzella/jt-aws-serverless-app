@@ -25,9 +25,9 @@ jobs:
           command: |
             ./run build
       - save_cache:
-          key: app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
+          key: api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
           paths:
-            - backend/api/app/node_modules
+            - backend/api/backend/api/app/node_modules
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -39,7 +39,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
+            - api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
       - run:
           name: Unit Test
           command: |
@@ -51,7 +51,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
+            - api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
       - run:
           name: Integration Test
           command: |
@@ -64,7 +64,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - app_dependencies-{{ .Branch }}-{{ checksum "app/package-lock.json" }}
+            - api_dependencies-{{ .Branch }}-{{ checksum "backend/api/app/package-lock.json" }}
       - run:
           name: Integration Test
           command: |
@@ -121,7 +121,7 @@ workflows:
 
       - Deploy_App_Dev:
           requires:
-            - Package_App
+            - Unit_Test
 
       # For serverless/infrastructure testing, Parallelization of Integration Test might not be possible
       # because of the need to deploy infra first before running tests
