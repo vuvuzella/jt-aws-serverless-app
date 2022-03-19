@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Unit Test
           command: |
-            ./run test
+            ./run test_unit
 
   Integration_Test:
     executor: serverless-base-image
@@ -55,8 +55,7 @@ jobs:
       - run:
           name: Integration Test
           command: |
-            pushd app
-            npm run test:integration
+            ./run test_integration
 
   System_Test:
     executor: serverless-base-image
@@ -68,8 +67,8 @@ jobs:
       - run:
           name: Integration Test
           command: |
-            pushd app
             echo "Running System Test"
+            echo "Job not yet supported"
 
   Deploy_App_Dev:
     executor: serverless-base-image
@@ -83,7 +82,7 @@ jobs:
           name: Deploy Application to DEV
           command: |
             echo 'Deploying Serverless App to DEV'
-            ls -a
+            ./run deploy
 
   Deploy_App_Staging:
     executor: serverless-base-image
@@ -95,7 +94,7 @@ jobs:
           name: Deploy Application to STAGING
           command: |
             echo 'Deploying Serverless App to Staging'
-            ls -a
+            echo "Job not yet supported"
 
   Deploy_App_Prod:
     executor: serverless-base-image
@@ -107,7 +106,7 @@ jobs:
           name: Deploy Application to PROD
           command: |
             echo 'Deploying Serverless App to Prod'
-            ls -a
+            echo "Job not yet supported"
 
 workflows:
   Example_Workflow:
