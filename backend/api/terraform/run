@@ -1,0 +1,111 @@
+#! /bin/env bash
+
+# Exit values:
+# 0 on success
+# 1 on failure
+
+function usage {
+    local txt=(
+"Build script for serverless applications"
+"Usage: $SCRIPT [options] <command> [arguments]"
+""
+"Commands:"
+"  plan              Build the application code"
+"  test              Run the infrastructure integration tests"
+"  deploy            Deploy the the application to cloud"
+""
+"Options:"
+"  --help, -h        Print help"
+"  --version, -v     Print version"
+
+    )
+    printf "%s\n" "${txt[@]}"
+}
+
+function proj-plan {
+  echo "executing the terraform plan"
+}
+
+function proj-test {
+  echo "executing terraform test"
+}
+
+function proj-deploy {
+  echo "executing terraform deploy"
+
+  if [ -n "$ENVIRONMENT" ];
+  then
+    case "$ENVIRONMENT" in
+      dev)
+        echo "deploying to dev"
+        pushd deploy
+        pushd dev
+        terragrunt apply
+        popd
+        popd
+        exit 0
+      ;;
+      staging)
+        echo "deploying to staging"
+        pushd deploy
+        pushd staging
+        terragrunt plan
+        popd
+        popd
+        exit 0
+      ;;
+      prod)
+        echo "deploying to prod"
+        pushd deploy
+        pushd prod
+        terragrunt plan
+        popd
+        popd
+        exit 0
+      ;;
+      *)
+        echo "Error: Environment value is not one of \"dev\", \"staging\", or \"prod\": $ENVIRONMENT"
+        exit 0
+      ;;
+    esac
+  else
+    echo "Error: Environment not set. Aborting deployment"
+    exit 0
+  fi
+}
+
+#
+# Process options
+#
+while(( $# ))
+do
+    case "$1" in
+
+        --help | -h)
+            usage
+            exit 0
+        ;;
+        plan)
+          command=$1
+          shift
+          proj-$command $*
+          exit 0
+        ;;
+
+        test \
+        | deploy)
+            command=$1
+            shift   # shifts positional arguments passed
+            proj-$command $* # call the command and pass in the remaining commands, the commands will be indexed from $1 from the perspective of the command
+            exit 0
+        ;;
+
+        *)
+            badusage "Option/Command not recognized"
+            exit 1
+        ;;
+    esac
+done
+
+badusage
+exit 1
