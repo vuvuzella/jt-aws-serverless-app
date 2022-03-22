@@ -39,3 +39,11 @@ module "helloWorld" {
   app_dep_artifact = "../../../../../../artifacts/dependencies.zip"
   app_handler = "index.helloWorld"
 }
+
+module "apigw" {
+  source = "../../../../../modules/api_gateway"
+  endpoints = [{
+    invoke_uri = module.helloWorld.invoke_arn,
+    integration_method = "POST"
+  }]
+}
