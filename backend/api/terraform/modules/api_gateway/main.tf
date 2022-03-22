@@ -27,7 +27,7 @@ resource "aws_apigatewayv2_integration" "endpoints" {
 
   api_id                      = aws_apigatewayv2_api.serverless_api.id
   description                 = "a lambda endpoint"
-  integration_type            = "AWS"
+  integration_type            = "HTTP"
   connection_type             = "INTERNET"
   content_handling_strategy   = "CONVERT_TO_TEXT"
   integration_method          = var.endpoints[count.index].integration_method
