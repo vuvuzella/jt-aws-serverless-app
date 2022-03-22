@@ -12,3 +12,8 @@ variable "app_handler" {
   type = string
   description = "The dot notation to the handler for this lambda"
 }
+
+variable "lambda_name" {
+  type = string
+  description = "The name of the lambda function"
+}

@@ -28,12 +28,18 @@ variable "app_handler" {
   description = "The dot notation to the handler for this lambda"
 }
 
+variable "lambda_name" {
+  type = string
+  description = "The name of the lambda functions"
+}
+
 
 module "lambda_generic" {
   source            = "../lambda_generic"
   app_artifact      = var.app_artifact
   app_dep_artifact  = var.app_dep_artifact
   app_handler       = var.app_handler
+  lambda_name       = var.lambda_name
 }
 
 resource "aws_apigatewayv2_integration" "endpoints" {

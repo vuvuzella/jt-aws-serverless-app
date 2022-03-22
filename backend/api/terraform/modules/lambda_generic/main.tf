@@ -10,7 +10,7 @@ terraform {
 
 resource "aws_lambda_function" "serverless_app" {
   filename = var.app_artifact
-  function_name = "serverless-lambda"
+  function_name = "serverless-lambda-${var.lambda_name}"
   role = aws_iam_role.lambda_role.arn
   handler = var.app_handler
   source_code_hash = filebase64sha256(var.app_artifact)
@@ -31,7 +31,7 @@ resource "aws_lambda_function" "serverless_app" {
 }
 
 resource "aws_security_group" "lambda_sg" {
-  name = "lambda_sg"
+  name = "lambda_sg-${var.lambda_name}"
   description = "example security group"
   vpc_id = data.aws_vpc.main_network.id
 
@@ -57,7 +57,7 @@ resource "aws_security_group" "lambda_sg" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "iam_role_lambda"
+  name = "serverless-lambda-role-${var.lambda_name}"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",

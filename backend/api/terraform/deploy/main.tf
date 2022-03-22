@@ -41,6 +41,7 @@ module "helloWorld" {
   api_gateway_id    = module.apigw.id
   http_method       = "ANY"
   route             = "example/helloworld"
+  lambda_name       = "HelloWorld"
 }
 
 module "apigw" {
