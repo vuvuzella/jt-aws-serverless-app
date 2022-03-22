@@ -34,16 +34,15 @@ output "Environment" {
 # Sample lambda
 # ---------------------------------
 module "helloWorld" {
-  source = "../../../../../modules/lambda_generic"
-  app_artifact = "../../../../../../artifacts/app.zip"
-  app_dep_artifact = "../../../../../../artifacts/dependencies.zip"
-  app_handler = "index.helloWorld"
+  source            = "../../../../../modules/lambda_endpoint"
+  app_artifact      = "../../../../../../artifacts/app.zip"
+  app_dep_artifact  = "../../../../../../artifacts/dependencies.zip"
+  app_handler       = "index.helloWorld"
+  api_gateway_id    = module.apigw.id
+  http_method       = "ANY"
+  route             = "example/helloworld"
 }
 
 module "apigw" {
   source = "../../../../../modules/api_gateway"
-  endpoints = [{
-    invoke_uri = module.helloWorld.invoke_arn,
-    integration_method = "POST"
-  }]
 }

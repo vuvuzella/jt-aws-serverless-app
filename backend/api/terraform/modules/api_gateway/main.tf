@@ -22,16 +22,6 @@ resource "aws_apigatewayv2_api" "serverless_api" {
   protocol_type = "HTTP"
 }
 
-resource "aws_apigatewayv2_integration" "endpoints" {
-  count = length(var.endpoints)
-
-  api_id                      = aws_apigatewayv2_api.serverless_api.id
-  description                 = "a lambda endpoint"
-  integration_type            = "HTTP"
-  connection_type             = "INTERNET"
-  content_handling_strategy   = "CONVERT_TO_TEXT"
-  integration_method          = var.endpoints[count.index].integration_method
-  integration_uri             = var.endpoints[count.index].invoke_uri
-  passthrough_behavior        = "WHEN_NO_MATCH" 
-
+output "id" {
+  value = aws_apigatewayv2_api.serverless_api.id
 }
