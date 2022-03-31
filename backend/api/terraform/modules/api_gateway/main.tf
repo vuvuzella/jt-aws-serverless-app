@@ -16,12 +16,33 @@ terraform {
 # 2. integration
 # 3. stage
 # 4. deployment
+data "aws_vpc" "main_network" {
+  id = "vpc-089db66b70fffa9df"
+}
+
+data "aws_subnet_ids" "main_subnets" {
+  vpc_id = "vpc-089db66b70fffa9df" 
+}
 
 resource "aws_apigatewayv2_api" "serverless_api" {
   name = "serverless_api"
   protocol_type = "HTTP"
 }
 
+resource "aws_apigatewayv2_stage" "gw_stage" {
+  api_id = aws_apigatewayv2_api.serverless_api.id
+  name = "gw_stage"
+  auto_deploy = true
+}
+
 output "id" {
   value = aws_apigatewayv2_api.serverless_api.id
+}
+
+output "arn" {
+  value = aws_apigatewayv2_api.serverless_api.arn
+}
+
+output "execution_arn" {
+  value = aws_apigatewayv2_api.serverless_api.execution_arn
 }

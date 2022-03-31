@@ -3,11 +3,6 @@ variable "api_gateway_id" {
   description = "The api gateway id"
 }
 
-variable "http_method" {
-  type = string
-  description = "Can be any of the available HTTP standard methods"
-}
-
 variable "route" {
   type = string
   description = "The route of the endpoint"
@@ -33,6 +28,10 @@ variable "lambda_name" {
   description = "The name of the lambda functions"
 }
 
+variable "api_gateway_execution_arn" {
+  type = string
+  description = "The arn of the api gateway this lambda is attaching to"
+}
 
 module "lambda_generic" {
   source            = "../lambda_generic"
@@ -43,13 +42,11 @@ module "lambda_generic" {
 }
 
 resource "aws_apigatewayv2_integration" "endpoints" {
-
   api_id                      = var.api_gateway_id
   description                 = "a lambda endpoint"
-  integration_type            = "HTTP_PROXY"
+  integration_type            = "AWS_PROXY"
   connection_type             = "INTERNET"
-  content_handling_strategy   = "CONVERT_TO_TEXT"
-  integration_method          = var.http_method
+  integration_method          = "POST"
   integration_uri             = module.lambda_generic.invoke_arn
   passthrough_behavior        = "WHEN_NO_MATCH" 
 
@@ -57,6 +54,19 @@ resource "aws_apigatewayv2_integration" "endpoints" {
 
 resource "aws_apigatewayv2_route" "routes" {
   api_id    = var.api_gateway_id
-  route_key = "${upper(var.http_method)} ${var.route}"
+  route_key = "ANY /{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.endpoints.id}"
+}
+
+resource "aws_lambda_permission" "api_gw_invoke" {
+  statement_id = "${var.lambda_name}-AllowExecutionFromApiGateway"
+  action = "lambda:InvokeFunction"
+  function_name = module.lambda_generic.function_name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${var.api_gateway_execution_arn}/*/*"
+
+}
+
+output "lambda_generic" {
+  value = module.lambda_generic
 }

@@ -30,6 +30,10 @@ output "Environment" {
   value = var.environment
 }
 
+module "apigw" {
+  source = "../../../../../modules/api_gateway"
+}
+
 # ---------------------------------
 # Sample lambda
 # ---------------------------------
@@ -39,11 +43,7 @@ module "helloWorld" {
   app_dep_artifact  = "../../../../../../artifacts/dependencies.zip"
   app_handler       = "index.helloWorld"
   api_gateway_id    = module.apigw.id
-  http_method       = "ANY"
-  route             = "example/helloworld"
+  route             = "helloworld"
   lambda_name       = "HelloWorld"
-}
-
-module "apigw" {
-  source = "../../../../../modules/api_gateway"
+  api_gateway_execution_arn   = module.apigw.execution_arn
 }
